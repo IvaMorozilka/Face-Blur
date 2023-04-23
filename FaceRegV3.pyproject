@@ -1,3 +1,3 @@
 {
-    "files": ["qml/CustomSlider.qml","blur.py","main.py","main.qml"]
+    "files": ["qml/CustomSlider.qml","main.qml","main.py"]
 }
