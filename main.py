@@ -1,12 +1,13 @@
 # This Python file uses the following encoding: utf-8
 import sys
 from pathlib import Path
-from PySide6.QtGui import QPixmap, QImage
+from PySide6.QtGui import QPixmap, QImage, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtCore import QObject, Signal, Slot, QThread
 from PySide6.QtWidgets import QApplication, QFileDialog
 from PySide6.QtQuick import QQuickImageProvider
 import cv2
+import os
 import face_recognition
 import qimage2ndarray
 
@@ -123,8 +124,8 @@ class MainWindow(QObject):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     engine = QQmlApplicationEngine()
-    qml_file = Path(__file__).resolve().parent / "main.qml"
-
+    qml_file = Path('main.qml')
+    #Path(__file__).resolve().parent / "main.qml"
     # Создаем экземпляр класса MainWindow и устанавливаем его в качестве контекста QML.
     main = MainWindow(engine)
     context = engine.rootContext()
@@ -135,4 +136,5 @@ if __name__ == "__main__":
     if not engine.rootObjects():
         sys.exit(-1)
     # Запускаем цикл обработки событий приложения.
+    app.setWindowIcon(QIcon('window.ico'))
     sys.exit(app.exec())

@@ -16,7 +16,7 @@ Window {
     minimumHeight: 310
     minimumWidth: 210
     flags: Qt.Window | Qt.FramelessWindowHint
-    title: qsTr("Hello World")
+    title: qsTr("Face Blur")
     property real aspectRatio: width / height
 
     //область для обрабатывания событий resize окна, так как мы убрали эту возможность указав флаг Qt.FramelessWindowHint
