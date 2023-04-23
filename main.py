@@ -136,5 +136,5 @@ if __name__ == "__main__":
     if not engine.rootObjects():
         sys.exit(-1)
     # Запускаем цикл обработки событий приложения.
-    app.setWindowIcon(QIcon('window.ico'))
+    app.setWindowIcon(QIcon('./icons/window.ico'))
     sys.exit(app.exec())
