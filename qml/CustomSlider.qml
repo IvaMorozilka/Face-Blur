@@ -5,6 +5,8 @@ Slider {
     id: control
     value: 0.5
     orientation: Qt.Vertical
+    property int default_value: 0
+    property color default_value_color: "#ffffff"
 
     background: Rectangle {
         x: control.leftPadding + control.availableWidth / 2 - width / 2
@@ -33,7 +35,8 @@ Slider {
         implicitWidth: 26
         implicitHeight: 26
         radius: 13
-        color: control.pressed ? "#f0f0f0" : "#f6f6f6"
-        border.color: "#432464"
+        color: {control.value == control.default_value ? control.default_value_color : "#f6f6f6"}
+        border.color: "white"
     }
+
 }

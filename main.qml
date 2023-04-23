@@ -5,6 +5,7 @@ import QtQuick.Layouts 6.3
 import "qml"
 
 Window {
+    //главное окно
     id: mainWindow
     width: 600
     height: 800
@@ -18,7 +19,7 @@ Window {
     title: qsTr("Hello World")
     property real aspectRatio: width / height
 
-
+    //область для обрабатывания событий resize окна, так как мы убрали эту возможность указав флаг Qt.FramelessWindowHint
     MouseArea {
         id: windowResize
         anchors.fill: parent
@@ -52,13 +53,6 @@ Window {
             }
         }
         onReleased: {
-            console.log('-------------------')
-            console.log("Image_trueWxH",image.paintedWidth, image.paintedWidth)
-            console.log("Image_widgetWxH",image.width, image.height)
-            console.log("WindowWxH",mainWindow.width, mainWindow.height)
-            console.log("Image_true",mainWindow.aspectRatio)
-            console.log("Image_widget",image.width / image.height)
-            console.log("Window",mainWindow.width / mainWindow.height)
             if (image.source != ""){
                 mainWindow.width += Math.min(0, image.paintedWidth - image.width);
                 mainWindow.height += Math.min(0, image.paintedHeight - image.height);
@@ -66,8 +60,11 @@ Window {
         }
 
     }
-
+    //слайдер для изменения размытия
     CustomSlider{
+        default_value: 33
+        default_value_color: "#a283c2"
+
         id: blurSlider
         from: 1
         to: 99
@@ -81,10 +78,17 @@ Window {
         anchors.topMargin: 0
 
         onMoved: {
+            if (blurSlider.value >= 31 && blurSlider.value <= 35){
+                blurSlider.value = 33
+            }
             backend.blur_slider_moved(blurSlider.value)
         }
     }
+    //слайдер для изменения области размытия
     CustomSlider{
+        default_value: 0
+        default_value_color: "#a283c2"
+
         id: areaSlider
         anchors.left: blurSlider.right
         anchors.right: parent.right
@@ -99,11 +103,16 @@ Window {
         stepSize: 2
         value: 0
 
+
         onMoved: {
+            if (areaSlider.value >= -2 && areaSlider.value <= 2){
+                areaSlider.value = 0
+            }
             backend.area_slider_moved(areaSlider.value)
         }
 
     }
+    //топ бар приложения
     Rectangle {
         id: topBar
         height: 40
@@ -131,7 +140,7 @@ Window {
             anchors.leftMargin: 20
 
         }
-
+        //кнопка закрытия
         Button {
             id: closeBtn
             x: 598
@@ -164,7 +173,7 @@ Window {
 
 
         }
-
+        //кнопка сворачивания
         Button {
             id: minimizeBtn
             x: 555
@@ -195,7 +204,7 @@ Window {
             }
 
         }
-
+        //драг, чтобы окно можно было перемащать
         Item {
             id: _dragHandler
             anchors.fill: parent
@@ -207,7 +216,7 @@ Window {
             }
         }
     }
-
+    //прямоугольник вокруг изображения
     Rectangle {
         id: imgBorder
         color: "#00ffffff"
@@ -223,7 +232,7 @@ Window {
         anchors.topMargin: 20
         anchors.leftMargin: 20
         Layout.alignment: Qt.AlignLeft | Qt.AlignBaseline
-
+        //виджет для показа изображения
         Image {
             id: image
             anchors.fill: parent
@@ -234,13 +243,14 @@ Window {
             anchors.topMargin: 4
             fillMode: Image.PreserveAspectFit
         }
-
+        //область для обработки перетаскивания файла
         DropArea{
             property int maxImageWidth: 400
 
             id: dropImg
             anchors.fill: parent
             onDropped: function(event) {
+                // если не картинка, не принимаем
                 if (!(/\.(png|jpe?g|bmp)$/i.test(event.urls[0]))){
                     image.source = ""
                     animationSequence.start()
@@ -248,7 +258,7 @@ Window {
                 }
 
                image.source = event.urls[0]
-
+                //блок для установки соотношения сторон приложения по соотношению сторон картинки
                 mainWindow.aspectRatio = image.paintedWidth / image.paintedHeight
                 var delta_image_width = image.paintedWidth - image.width
                 var delta_image_height = image.paintedHeight - image.height
@@ -261,7 +271,7 @@ Window {
                 blurSlider.value = 33
             }
         }
-
+        //иконка перетащи сюда
         Button {
             id: iconDragNDrop
             text: qsTr("Button")
@@ -282,7 +292,7 @@ Window {
         }
 
     }
-
+    //анимация при неправильных действиях
     ParallelAnimation {
         id: animationSequence
 
@@ -335,7 +345,7 @@ Window {
         }
     }
 
-
+    //кнопка сохранить
     Button {
         id: saveBtn
         y: 534
@@ -373,7 +383,7 @@ Window {
             }
             color: "#432464"
         }
-
+        //запускаем функцию из python
         onClicked: {
             if (image.source == ""){
                 animationSequence.start()
@@ -382,7 +392,7 @@ Window {
             backend.handle_save_button_clicked()
         }
     }
-
+    //кнопка размытия
     Button {
         id: blurBtn
         y: 490
@@ -421,7 +431,7 @@ Window {
             }
             color: "#432464"
         }
-
+        //запускаем функцию питон
         onClicked: {
             if (image.source == ""){
                 animationSequence.start()
@@ -430,7 +440,7 @@ Window {
             backend.processImage(image.source)
         }
     }
-
+    //текстовые пометки
     Text {
         id: textBlur
         x: 354
@@ -456,14 +466,11 @@ Window {
         textFormat: Text.RichText
         rotation: 270
     }
-
+    //передаем информацию в питон
     Connections {
         target: backend
         function onGetImageSource(url) {
             image.source = url
-        }
-        function onGetSliderValue(value){
-            console.log(value)
         }
 
     }
